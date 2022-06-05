@@ -68,10 +68,10 @@ xcb-utilがxorg-macros (util-macros) を必要とするので、これでチェ�
 
 xcb-utilsのビルド時には、submoduleも必要になる。
 
+xcb本体も必要になるのでやはりパス。
+
 ## TODO
-- インストールバージョンはデフォルトで最新の1個前
 - make check, make testの自動判定
-- 最新バージョン番号の取得方法
 
 ## Dpendency
 

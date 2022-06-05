@@ -1,9 +1,9 @@
-PKG,URL,MANDATORY,VER,TAG,URL,BUILDER,OPTION,CONFIGURE
-httpd,https://github.com/apache/httpd,apr-util|pcre,-,-,-,make,-,
-apr-util,https://github.com/apache/apr-util,apr-util|pcre,-,$VER,-,make,autoconf libtool python,
-pcre,-,-,-,-,-,make,cmake bzip2 zlib readline editline,
-apr,https://github.com/apache/apr,-,-,$VER,-,make,autoconf libtool python,
-zlib,https://github.com/madler/zlib,-,-,v$VER,-,make,-,
-ncurses,git://ncurses.scripts.mit.edu/ncurses.git,,,,,,,
-xcb-util,https://gitlab.freedesktop.org/xorg/lib/libxcb-util,util-macros,,,,,,
-util-macros,https://gitlab.freedesktop.org/xorg/util/macros,,,,,,,
+PKG,URL,MANDATORY,TAG,BUILDER,OPTION,CONFIGURE
+httpd,https://github.com/apache/httpd,apr-util|pcre,-,make,-,
+apr-util,https://github.com/apache/apr-util,apr-util|pcre,$VER,make,autoconf libtool python,
+pcre,-,-,-,make,cmake bzip2 zlib readline editline,
+apr,https://github.com/apache/apr,-,$VER,make,autoconf libtool python,
+zlib,https://github.com/madler/zlib,,v$VER,make,-,
+ncurses,git://ncurses.scripts.mit.edu/ncurses.git,,,,,
+xcb-util,https://gitlab.freedesktop.org/xorg/lib/libxcb-util,util-macros,,,,
+util-macros,https://gitlab.freedesktop.org/xorg/util/macros,,,,,

@@ -47,10 +47,11 @@ ifscratch_body() {
 			if git ls-remote -t --sort=-creatordate >/dev/null 2>&1; then
 				TAG=$(git ls-remote -t --sort=-creatordate | head -n 1 | sed 's@.*/@@')
 			fi
-		fi
-		if ! [ ${VER-} ]; then
-			# TAG: PKG-VER, PKG-vVER, 0_0_1
-			VER=$(printf '%s\n' "$TAG" | sed 's/_/./g; s/[^0-9.]//g')
+			## \todo specify version only
+			if ! [ ${VER-} ]; then
+				# TAG: PKG-VER, PKG-vVER, 0_0_1
+				VER=$(printf '%s\n' "$TAG" | sed 's/_/./g; s/[^0-9.]//g')
+			fi
 		fi
 		PKG_VER=$PKG${VER:+-$VER}
 		if [ -e "$LOCAL/stow/$PKG_VER" ]; then
