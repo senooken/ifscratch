@@ -1,7 +1,6 @@
-// \file README.adoc
-// \author SENOO, Ken
+# ifscratch
 
-= Local installation
+## Local installation
 Ken SENOO
 
 stow を使ったローカルインストールスクリプトをまとめる。
@@ -14,13 +13,13 @@ LOCALには例えば以下のような値を想定する。
 LOCAL=${HOME}/local
 
 
-== Policy
+## Policy
 
 * パッケージ名，バージョン番号，解凍コマンドやダウンロードURLなどをローカル変数に与えて，共通のインストール部のスクリプトを実行する。
 
 このパッケージごとのインストール条件は，CSVファイルなどで管理したほうが扱いやすいのではないかな。
 
-list.csvにインストールに必要な情報を全て記入しておいて，この情報を元にインストールする感じ。
+ifscratch.csvにインストールに必要な情報を全て記入しておいて，この情報を元にインストールする感じ。
 
 まずは一番シンプルなzlibのインストールでの動作を確認する。
 
@@ -28,15 +27,29 @@ list.csvにインストールに必要な情報を全て記入しておいて，
 
 その次に，追加コマンドの必要な例として，readlineを試す。
 
+ファイルから情報を読み込む部分は一つの関数・コマンド (`parse_arg`) にして、将来のファイル形式変更に備える。
+
+最低限必要な情報
+
+- PKG: パッケージ名
+- VER: バージョン番号
+- TAG: タグ名
+- REPO_URL: リポジトリーURL
+
+parse_argで上記の情報を該当変数に格納すればいい？
+
+グローバル変数にするか？あるいは$1-$4にするか？
+
+ひとまず、グローバル変数で考える。
 
 ## TODO
 - インストールバージョンはデフォルトで最新の1個前
 - make check, make testの自動判定
 
 
-== Dpendency
+## Dpendency
 
-* gcc
-* make
-* wget or curl -> どちらかが標準で入っている？
-* tar -> tarかbsdtarが標準で入っている？またはcpio，bsdcpio，paxとかで代用がききそう？
+- gcc
+- make
+- wget or curl -> どちらかが標準で入っている？
+- tar -> tarかbsdtarが標準で入っている？またはcpio，bsdcpio，paxとかで代用がききそう？
