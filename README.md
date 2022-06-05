@@ -44,6 +44,30 @@ parse_argで上記の情報を該当変数に格納すればいい？
 
 ファイルで最低限保存が必要なのは、URLくらいか。後は、最悪引数に渡してもいい。
 
+### 最新バージョンの取得
+以下のコマンドで、リモートからタグの情報を取得できる。
+
+```
+git ls-remote -t --sort=-version:refname
+```
+
+```
+21767c654d31d2dccdde4330529775c6c5fd5389	refs/tags/v1.2.12^{}
+7f5767285055ea07ffdaf90a64f877bc382f3cc3	refs/tags/v1.2.12
+```
+
+ここから抽出すればいい。
+
+`sed 's@.*/@@; s@\^{}$@@'`
+
+### 依存関係の自動処理
+
+xcb-utilがxorg-macros (util-macros) を必要とするので、これでチェックするのがいいだろう。
+
+ただし、util-macrosをリポジトリーからビルドする場合、autoreconf (autoconf)/aclocal (automake) が必要になる。
+
+xcb-utilsのビルド時には、submoduleも必要になる。
+
 ## TODO
 - インストールバージョンはデフォルトで最新の1個前
 - make check, make testの自動判定
@@ -53,5 +77,8 @@ parse_argで上記の情報を該当変数に格納すればいい？
 
 - gcc
 - make
+- git
 - wget or curl -> どちらかが標準で入っている？
 - tar -> tarかbsdtarが標準で入っている？またはcpio，bsdcpio，paxとかで代用がききそう？
+- autoreconf
+- stow (perl)

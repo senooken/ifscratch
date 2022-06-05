@@ -3,7 +3,7 @@
 ## \file      ifscratch.sh
 ## \author    SENOO, Ken
 ## \copyright CC0
-## \version   0.1.0
+## \version   0.2.0
 ################################################################################
 
 : <<-"EOT"
@@ -23,11 +23,14 @@ ifscratch() {
 ## \brief 処理に必要な情報をファイルから取得する。
 ifscratch_arg() {
 	TAB=$(printf '\t')
-	PKG=$1 VER=$2 TAG=$3
+	PKG=$1 VER=${2-} TAG=${3-}
 	LINE=$(sed -n "/^$PKG,/s/,/$TAB/gp" $EXE_NAME.csv)
 	set $LINE
-	URL=$2
-	PKG_VER=$PKG${VER:+-$VER}
+	URL=$2 MANDATORY=${3-}
+
+	if [ "$MANDATORY" ]; then
+		($EXE_NAME "$MANDATORY")
+	fi
 }
 
 ifscratch_body() {
@@ -39,9 +42,27 @@ ifscratch_body() {
 	if command -v git >/dev/null; then
 		[ -e $PKG ] || git clone --depth 1 $URL $PKG
 		cd $PKG
+		if ! [ ${TAG-} ]; then
+			TAG=$(git ls-remote -t --sort=-version:refname | head -n 1 | sed 's@.*/@@; s@\^{}$@@')
+			if git ls-remote -t --sort=-creatordate >/dev/null 2>&1; then
+				TAG=$(git ls-remote -t --sort=-creatordate | head -n 1 | sed 's@.*/@@')
+			fi
+		fi
+		if ! [ ${VER-} ]; then
+			# TAG: PKG-VER, PKG-vVER, 0_0_1
+			VER=$(printf '%s\n' "$TAG" | sed 's/_/./g; s/[^0-9.]//g')
+		fi
+		PKG_VER=$PKG${VER:+-$VER}
+		if [ -e "$LOCAL/stow/$PKG_VER" ]; then
+			return
+		fi
 		git fetch --depth 1 origin tag $TAG
 		git checkout -f $TAG
 		git clean -dfX
+		if [ -e .gitmodules ]; then
+			git submodule update --init --depth 1
+			git submodule foreach git clean -dfX
+		fi
 		# [ -e .gitmodules ] && git submodule foreach --recursive git clean -dfX
 		# [ -e configure.ac ] && autoreconf -is
 		# ./buildconf
