@@ -1,1 +1,0 @@
-install-ncurses-6.0.sh
