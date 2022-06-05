@@ -1,0 +1,6 @@
+PKG,URL,VER,TAG,URL,BUILDER,MANDATORY,OPTION
+httpd,https://github.com/apache/httpd,-,-,-,make,apr-util|pcre,-
+apr-util,https://github.com/apache/apr-util,-,$VER,-,make,apr-util|pcre,autoconf libtool python
+pcre,-,-,-,-,make,-,cmake bzip2 zlib readline editline
+apr,https://github.com/apache/apr,-,$VER,-,make,-,autoconf libtool python
+zlib,https://github.com/madler/zlib,-,v$VER,-,make,-,-
