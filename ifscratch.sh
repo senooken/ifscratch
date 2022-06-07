@@ -26,11 +26,14 @@ ifscratch_arg() {
 	PKG=$1 VER=${2-} TAG=${3-}
 	LINE=$(sed -n "/^$PKG,/s/,/$TAB/gp" $EXE_NAME.csv)
 	set $LINE
-	URL=$2 MANDATORY=${3-}
+	URL=$2 MANDATORY=${3-} TAGS=${4-} SRC=${5-}
 
-	if [ "$MANDATORY" ]; then
+	# if [ "$MANDATORY" ]; then
+	# 	($EXE_NAME "$MANDATORY")
+	# fi
+	case "$MANDATORY" in -);; *)
 		($EXE_NAME "$MANDATORY")
-	fi
+	esac
 }
 
 ifscratch_body() {
@@ -43,14 +46,14 @@ ifscratch_body() {
 		[ -e $PKG ] || git clone --depth 1 $URL $PKG
 		cd $PKG
 		if ! [ ${TAG-} ]; then
-			TAG=$(git ls-remote -t --sort=-version:refname | head -n 1 | sed 's@.*/@@; s@\^{}$@@')
+			TAG=$(git ls-remote -t --sort=-version:refname origin ${TAGS-} | head -n 1 | sed 's@.*/@@; s@\^{}$@@')
 			if git ls-remote -t --sort=-creatordate >/dev/null 2>&1; then
-				TAG=$(git ls-remote -t --sort=-creatordate | head -n 1 | sed 's@.*/@@')
+				TAG=$(git ls-remote -t --sort=-creatordate origin ${TAGS-} | head -n 1 | sed 's@.*/@@')
 			fi
 			## \todo specify version only
 			if ! [ ${VER-} ]; then
 				# TAG: PKG-VER, PKG-vVER, 0_0_1
-				VER=$(printf '%s\n' "$TAG" | sed 's/_/./g; s/[^0-9.]//g')
+				VER=$(printf '%s\n' "$TAG" | sed 's/^[^0-9]*//; s/[_-]/./g; s/[^0-9.]//g')
 			fi
 		fi
 		PKG_VER=$PKG${VER:+-$VER}
@@ -64,6 +67,8 @@ ifscratch_body() {
 			git submodule update --init --depth 1
 			git submodule foreach git clean -dfX
 		fi
+		## change another source directory
+		[ ${SRC-} ] && cd $SRC
 		# [ -e .gitmodules ] && git submodule foreach --recursive git clean -dfX
 		# [ -e configure.ac ] && autoreconf -is
 		# ./buildconf
@@ -74,7 +79,7 @@ ifscratch_body() {
 		# cd $PKG-$VER
 	fi
 	make -kj $J distclean clean || :
-	[ -e configure ] || ([ -e configure.ac ] && autoreconf -is)
+	[ -e configure ] || ([ -e configure.ac ] && autoreconf -fis)
 	[ -x configure ] && ./configure --prefix="$LOCAL/stow/$PKG_VER"
 	make -j $J
 	# make -j $J check

@@ -70,6 +70,10 @@ xcb-utilsのビルド時には、submoduleも必要になる。
 
 xcb本体も必要になるのでやはりパス。
 
+### autoreconf -fis
+libnslで-fが必要になった。
+
+
 ## TODO
 - make check, make testの自動判定
 
