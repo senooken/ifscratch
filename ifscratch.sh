@@ -12,40 +12,40 @@
 ifscratch.sh zlib 1.2.12 v1.2.12
 EOT
 
-STOW=stow
-
 EXE_NAME='ifscratch'
 ifscratch() {
+	STOW=stow
+	LOCAL=$([ $(id -u) = 0 ] && echo /usr/ || echo ~/.)local
+	J=$(grep -cs '^processor' /proc/cpuinfo || echo 2)
+	TAB=$(printf '\t')
+	SEP=,
 	ifscratch_arg ${1+"$@"}
 	ifscratch_body
 }
 
 ## \brief 処理に必要な情報をファイルから取得する。
 ifscratch_arg() {
-	TAB=$(printf '\t')
 	PKG=$1 VER=${2-} TAG=${3-}
-	LINE=$(sed -n "/^$PKG,/s/,/$TAB/gp" $EXE_NAME.csv)
-	set $LINE
+	LINE=$(grep "^$PKG$SEP.*" $EXE_NAME.csv)
+	IFS=$SEP
+	set -- $LINE
+	unset IFS
 	URL=$2 MANDATORY=${3-} TAGS=${4-} SRC=${5-}
 
-	# if [ "$MANDATORY" ]; then
-	# 	($EXE_NAME "$MANDATORY")
-	# fi
-	case "$MANDATORY" in -);; *)
+	## Skip if package installed.
+	if [ -e "$LOCAL/stow/$MANDATORY"* ] && [ "$MANDATORY" ]; then
 		($EXE_NAME "$MANDATORY")
-	esac
+	fi
 }
 
 ifscratch_body() {
-	LOCAL=$([ $(id -u) = 0 ] && echo /usr/ || echo ~/.)local
-	J=$(grep -cs '^processor' /proc/cpuinfo || echo 2)
 	mkdir -p "$LOCAL/src"
 	cd "$LOCAL/src"
 
 	if command -v git >/dev/null; then
 		[ -e $PKG ] || git clone --depth 1 $URL $PKG
 		cd $PKG
-		if ! [ ${TAG-} ]; then
+		if ! [ "${TAG-}" ]; then
 			TAG=$(git ls-remote -t --sort=-version:refname origin ${TAGS-} | head -n 1 | sed 's@.*/@@; s@\^{}$@@')
 			if git ls-remote -t --sort=-creatordate >/dev/null 2>&1; then
 				TAG=$(git ls-remote -t --sort=-creatordate origin ${TAGS-} | head -n 1 | sed 's@.*/@@')
