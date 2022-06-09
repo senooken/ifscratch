@@ -17,8 +17,8 @@ ifscratch() {
 	STOW=stow
 	LOCAL=$([ $(id -u) = 0 ] && echo /usr/ || echo ~/.)local
 	J=$(grep -cs '^processor' /proc/cpuinfo || echo 2)
-	TAB=$(printf '\t')
-	SEP=,
+	TAB=$(printf '\t.') TAB=${TAB%.}
+	SEP=$TAB,
 	ifscratch_arg ${1+"$@"}
 	ifscratch_body
 }
@@ -32,10 +32,14 @@ ifscratch_arg() {
 	unset IFS
 	URL=$2 MANDATORY=${3-} TAGS=${4-} SRC=${5-}
 
-	## Skip if package installed.
-	if [ -e "$LOCAL/stow/$MANDATORY"* ] && [ "$MANDATORY" ]; then
-		($EXE_NAME "$MANDATORY")
-	fi
+	[ "${MANDATORY##*|*}" ] && return;
+	set -- $MANDATORY
+	while [ -n "${1-}" ]; do
+		## Skip if package installed.
+		[ -e "$LOCAL/stow/$1"* ] && continue
+		($EXE_NAME "$1")
+		shift
+	done
 }
 
 ifscratch_body() {
@@ -45,7 +49,7 @@ ifscratch_body() {
 	if command -v git >/dev/null; then
 		[ -e $PKG ] || git clone --depth 1 $URL $PKG
 		cd $PKG
-		if ! [ "${TAG-}" ]; then
+		if [ -z "${TAG-}" ]; then
 			TAG=$(git ls-remote -t --sort=-version:refname origin ${TAGS-} | head -n 1 | sed 's@.*/@@; s@\^{}$@@')
 			if git ls-remote -t --sort=-creatordate >/dev/null 2>&1; then
 				TAG=$(git ls-remote -t --sort=-creatordate origin ${TAGS-} | head -n 1 | sed 's@.*/@@')
@@ -68,7 +72,7 @@ ifscratch_body() {
 			git submodule foreach git clean -dfX
 		fi
 		## change another source directory
-		[ ${SRC-} ] && cd $SRC
+		[ -n ${SRC-} ] && cd $SRC
 		# [ -e .gitmodules ] && git submodule foreach --recursive git clean -dfX
 		# [ -e configure.ac ] && autoreconf -is
 		# ./buildconf
