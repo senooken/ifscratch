@@ -1,6 +1,6 @@
 PKG,URL,MANDATORY,TAGS,SRC,BUILDER,OPTION,CONFIGURE,OK
-httpd,https://github.com/apache/httpd,apr-util|pcre,-,,make,-,,
-apr-util,https://github.com/apache/apr-util,apr-util|pcre,$VER,,make,autoconf libtool python,,
+httpd,https://github.com/apache/httpd,apr-util pcre,-,,make,-,,
+apr-util,https://github.com/apache/apr-util,apr-util pcre,$VER,,make,autoconf libtool python,,
 pcre,-,-,-,,make,cmake bzip2 zlib readline editline,,
 apr,https://github.com/apache/apr,-,$VER,,make,autoconf libtool python,,
 zlib,https://github.com/madler/zlib,-,v$VER,,make,-,,
@@ -8,6 +8,8 @@ ncurses,git://ncurses.scripts.mit.edu/ncurses.git,-,,,,,,
 xcb-util,https://gitlab.freedesktop.org/xorg/lib/libxcb-util,util-macros,,,,,,
 util-macros,https://gitlab.freedesktop.org/xorg/util/macros,-,,,,,,
 openssl,https://github.com/openssl/openssl,-,,,,,,
-libnsl,https://github.com/thkukuk/libnsl,-,,,,,,gettextÇ™ïKóvÅH
+libnsl,https://github.com/thkukuk/libnsl,gettext libtirpc,,,,,,
 icu,https://github.com/unicode-org/icu,-,release-*-[1-9],icu4c/source,,,,x
 gettext,https://git.savannah.gnu.org/git/gettext.git,-,,,,,,
+libtirpc,git://linux-nfs.org/~steved/libtirpc,,,,,,,
+rpcsvc-proto,https://github.com/thkukuk/rpcsvc-proto,-,,,,,,x
