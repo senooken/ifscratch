@@ -26,7 +26,7 @@ ifscratch() {
 ## \brief 処理に必要な情報をファイルから取得する。
 ifscratch_arg() {
 	PKG=$1 VER=${2-} TAG=${3-}
-	LINE=$(grep "^$PKG$SEP.*" $EXE_NAME.csv)
+	LINE=$(grep "^$PKG[$SEP].*" $EXE_NAME.csv)
 	IFS=$SEP
 	set -- $LINE
 	unset IFS
